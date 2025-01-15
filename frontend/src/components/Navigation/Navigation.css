@@ -1,0 +1,23 @@
+.navbar {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #344C38;
+    border-bottom: 1px solid #344C38;
+    width: 100%;
+  }
+
+  .navbar-links {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+
+  .navbar-right ul {
+    list-style: none;
+    display: flex;
+    gap: 10px;
+  }

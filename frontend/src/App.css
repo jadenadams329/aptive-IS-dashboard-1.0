@@ -1,0 +1,35 @@
+.app-container {
+    /* Stacks navbar (top) & main-content (below) vertically */
+    display: flex;
+    flex-direction: column;
+    height: 100vh; /* Full viewport height */
+  }
+
+  /* Optional: a class name in Navigation.jsx */
+  .navbar {
+    flex: 0 0 auto; /* Navbar height is based on content */
+    width: 100%;
+  }
+
+  /* This container holds the Sidebar & outlet side-by-side */
+  .main-content {
+    display: flex;
+    flex: 1; /* Takes remaining space after navbar */
+    overflow: hidden; /* Hide scrollbars for resizing */
+  }
+
+  /* Sidebar takes fixed width on the left */
+  .sidebar {
+    flex: 0 0 200px; /* Fixed width */
+    background-color: #ffffff;
+    border-right: 1px solid #e0e0e0;
+    height: 100%;
+    overflow-y: auto; /* Scroll if content is long */
+  }
+
+  /* The main area where routed components go */
+  .outlet-container {
+    flex: 1; /* Fill the remaining space */
+    padding: 20px;
+    overflow-y: auto;
+  }
