@@ -18,6 +18,10 @@ import Box from "@mui/material/Box";
 import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
 import FilterListIcon from "@mui/icons-material/FilterList";
+import EditIcon from "@mui/icons-material/Edit";
+import SaveIcon from "@mui/icons-material/Save";
+import Checkbox from "@mui/material/Checkbox";
+import { updateUserSaleThunk } from "../../store/userSales";
 
 function SalesTrackerTable() {
 	const dispatch = useDispatch();
@@ -33,6 +37,17 @@ function SalesTrackerTable() {
 	const [createdAtTo, setCreatedAtTo] = useState("");
 	const [serviced, setServiced] = useState("");
 	const [filtersVisible, setFiltersVisible] = useState(false);
+	const [selectedRow, setSelectedRow] = useState(null);
+	const [editMode, setEditMode] = useState(false);
+
+	const [accountNumber, setAccountNumber] = useState("");
+	const [planType, setPlanType] = useState("");
+	const [initialPrice, setInitialPrice] = useState("");
+	const [monthlyPrice, setMonthlyPrice] = useState("");
+	const [agreementLength, setAgreementLength] = useState("");
+	const [payment, setPayment] = useState("");
+	const [initialServiceDate, setInitialServiceDate] = useState("");
+	const [servicedStatus, setServicedStatus] = useState("");
 
 	useEffect(() => {
 		dispatch(getAllUserSalesThunk());
@@ -55,6 +70,70 @@ function SalesTrackerTable() {
 		setFiltersVisible(!filtersVisible);
 	};
 
+	const handleCheckboxChange = (saleId) => {
+		setSelectedRow(saleId === selectedRow ? null : saleId);
+		setEditMode(false);
+	};
+
+	const handleEditClick = (sale) => {
+		setFiltersVisible(false);
+		setEditMode(true);
+		setFiltersVisible(false);
+		setEditMode(true);
+		setAccountNumber(sale.accountNumber);
+		setPlanType(sale.planType);
+		setInitialPrice(sale.initialPrice);
+		setMonthlyPrice(sale.monthlyPrice);
+		if (sale.autopay && sale.ach) setPayment("ACH");
+		else if (sale.autopay && !sale.ach) setPayment("CC");
+		else setPayment("None");
+		setInitialServiceDate(sale.serviceDate);
+		setServicedStatus(sale.serviced);
+	};
+
+	const handleSaveClick = async (saleId) => {
+		const tableEditData = {
+			accountNumber,
+			planType,
+			initialPrice,
+			monthlyPrice,
+			payment,
+			initialServiceDate,
+			servicedStatus,
+		};
+		console.log(tableEditData);
+
+		let autopay;
+		let ach;
+
+		if (payment === "None") {
+			autopay = false;
+			ach = false;
+		} else if (payment === "CC") {
+			autopay = true;
+			ach = false;
+		} else {
+			autopay = true;
+			ach = true;
+		}
+		const updateSale = {
+			accountNumber,
+			planType,
+			initialPrice: parseInt(initialPrice),
+			monthlyPrice: parseInt(monthlyPrice),
+			autopay,
+			ach,
+			serviceDate: initialServiceDate,
+			serviced: servicedStatus,
+		};
+		try {
+			await dispatch(updateUserSaleThunk(updateSale, saleId));
+			setEditMode(false);
+		} catch (err) {
+			console.error(err);
+		}
+	};
+
 	const sortedSales = sales.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
 	const filteredSales = sortedSales.filter((sale) => {
@@ -71,6 +150,7 @@ function SalesTrackerTable() {
 	});
 
 	const columns = [
+		{ id: "checkbox", label: "" },
 		{ id: "accountNumber", label: "Account #" },
 		{ id: "planType", label: "Plan" },
 		{ id: "initialPrice", label: "Initial Price" },
@@ -85,8 +165,16 @@ function SalesTrackerTable() {
 		<Paper sx={{ padding: 2, maxWidth: 1000, margin: "auto" }}>
 			<Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 2 }}>
 				<Typography variant='h6'>My Sales</Typography>
-				<IconButton onClick={toggleFilters}>
-					<FilterListIcon />
+				<IconButton
+					onClick={
+						editMode
+							? () => handleSaveClick(selectedRow)
+							: selectedRow
+							? () => handleEditClick(sales.find((sale) => sale.id === selectedRow))
+							: toggleFilters
+					}
+				>
+					{editMode ? <SaveIcon /> : selectedRow ? <EditIcon /> : <FilterListIcon />}
 				</IconButton>
 			</Box>
 			{filtersVisible && (
@@ -173,29 +261,129 @@ function SalesTrackerTable() {
 
 							return (
 								<TableRow key={sale.id}>
-									<TableCell align='right'>{sale.accountNumber}</TableCell>
-									<TableCell align='right'>{sale.planType}</TableCell>
-									<TableCell align='right'>{sale.initialPrice}</TableCell>
-									<TableCell align='right'>{sale.monthlyPrice}</TableCell>
-									<TableCell align='right'>{cv}</TableCell>
-									<TableCell align='right'>{ez}</TableCell>
-									<TableCell align='right'>{sale.serviceDate}</TableCell>
-									<TableCell align='right'>{sale.serviced}</TableCell>
+									<TableCell padding='checkbox'>
+										<Checkbox checked={selectedRow === sale.id} onChange={() => handleCheckboxChange(sale.id)} />
+									</TableCell>
+									{editMode && selectedRow === sale.id ? (
+										<>
+											<TableCell align='right'>
+												<TextField
+													value={accountNumber}
+													onChange={(e) => {
+														setAccountNumber(e.target.value);
+													}}
+													sx={{ width: "100px" }}
+													size='small'
+												/>
+											</TableCell>
+											<TableCell align='right'>
+												<FormControl fullWidth sx={{ width: "75px" }}>
+													<Select
+														labelId='plan-type-label'
+														value={planType}
+														onChange={(e) => {
+															setPlanType(e.target.value);
+														}}
+														size='small'
+													>
+														<MenuItem value='Basic'>Basic</MenuItem>
+														<MenuItem value='Pro'>Pro</MenuItem>
+														<MenuItem value='Premium'>Premium</MenuItem>
+													</Select>
+												</FormControl>
+											</TableCell>
+											<TableCell align='right'>
+												<TextField
+													value={initialPrice}
+													onChange={(e) => {
+														setInitialPrice(e.target.value);
+													}}
+													sx={{ width: "60px" }}
+													size='small'
+												/>
+											</TableCell>
+											<TableCell align='right'>
+												<TextField
+													value={monthlyPrice}
+													onChange={(e) => {
+														setMonthlyPrice(e.target.value);
+													}}
+													sx={{ width: "60px" }}
+													size='small'
+												/>
+											</TableCell>
+											<TableCell align='right'>{cv}</TableCell>
+											<TableCell align='right'>
+												<FormControl fullWidth sx={{ width: "70px" }}>
+													<Select
+														labelId='ez-pay-label'
+														value={payment}
+														onChange={(e) => {
+															setPayment(e.target.value);
+														}}
+														size='small'
+													>
+														<MenuItem value='None'>None</MenuItem>
+														<MenuItem value='CC'>CC</MenuItem>
+														<MenuItem value='ACH'>ACH</MenuItem>
+													</Select>
+												</FormControl>
+											</TableCell>
+											<TableCell align='right'>
+												<TextField
+													type='date'
+													value={initialServiceDate}
+													onChange={(e) => {
+														setInitialServiceDate(e.target.value);
+													}}
+													sx={{ width: "150px" }}
+													size='small'
+												/>
+											</TableCell>
+											<TableCell align='right'>
+												<FormControl fullWidth sx={{ width: "100px" }}>
+													<Select
+														labelId='serviced-label'
+														value={servicedStatus}
+														onChange={(e) => {
+															setServicedStatus(e.target.value);
+														}}
+														size='small'
+													>
+														<MenuItem value='Pending'>Pending</MenuItem>
+														<MenuItem value='Yes'>Yes</MenuItem>
+														<MenuItem value='No'>No</MenuItem>
+													</Select>
+												</FormControl>
+											</TableCell>
+										</>
+									) : (
+										<>
+											<TableCell align='right'>{sale.accountNumber}</TableCell>
+											<TableCell align='right'>{sale.planType}</TableCell>
+											<TableCell align='right'>{sale.initialPrice}</TableCell>
+											<TableCell align='right'>{sale.monthlyPrice}</TableCell>
+											<TableCell align='right'>{cv}</TableCell>
+											<TableCell align='right'>{ez}</TableCell>
+											<TableCell align='right'>{sale.serviceDate}</TableCell>
+											<TableCell align='right'>{sale.serviced}</TableCell>
+										</>
+									)}
 								</TableRow>
 							);
 						})}
 					</TableBody>
 				</Table>
-				<TablePagination
-					rowsPerPageOptions={[10, 25, 100]}
-					component='div'
-					count={filteredSales.length}
-					rowsPerPage={rowsPerPage}
-					page={page}
-					onPageChange={handleChangePage}
-					onRowsPerPageChange={handleChangeRowsPerPage}
-				/>
 			</TableContainer>
+			<TablePagination
+				rowsPerPageOptions={[10, 25, 100]}
+				component='div'
+				count={filteredSales.length}
+				rowsPerPage={rowsPerPage}
+				page={page}
+				onPageChange={handleChangePage}
+				onRowsPerPageChange={handleChangeRowsPerPage}
+			/>
 		</Paper>
 	);
 }

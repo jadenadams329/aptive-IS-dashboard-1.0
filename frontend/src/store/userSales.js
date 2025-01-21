@@ -50,9 +50,9 @@ export const deleteUserSaleThunk = (userSaleId) => async (dispatch) => {
 	}
 };
 
-export const updateUserSaleThunk = (userSale) => async (dispatch) => {
-	const { id } = userSale;
-	const res = await csrfFetch(`/api/sales/${id}`, {
+export const updateUserSaleThunk = (userSale, saleId) => async (dispatch) => {
+
+	const res = await csrfFetch(`/api/sales/${saleId}`, {
 		method: "PUT",
 		body: JSON.stringify(userSale),
 	});
