@@ -23,11 +23,9 @@ import SaveIcon from "@mui/icons-material/Save";
 import Checkbox from "@mui/material/Checkbox";
 import { updateUserSaleThunk } from "../../store/userSales";
 
-function SalesTrackerTable() {
-	const dispatch = useDispatch();
-	const userSales = useSelector((state) => state.userSales.data);
-	const sales = Object.values(userSales);
+function SalesTrackerTable({sales}) {
 
+	const dispatch = useDispatch();
 	const [page, setPage] = useState(0);
 	const [rowsPerPage, setRowsPerPage] = useState(10);
 
@@ -49,9 +47,6 @@ function SalesTrackerTable() {
 	const [initialServiceDate, setInitialServiceDate] = useState("");
 	const [servicedStatus, setServicedStatus] = useState("");
 
-	useEffect(() => {
-		dispatch(getAllUserSalesThunk());
-	}, [dispatch]);
 
 	const handleChangePage = (event, newPage) => {
 		setPage(newPage);

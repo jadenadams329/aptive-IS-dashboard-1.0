@@ -1,7 +1,9 @@
-import { useSelector } from "react-redux";
-import { useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { useState, useEffect } from "react";
+import { getAllUserSalesThunk } from "../../store/userSales";
 import SalesTrackerTable from "./SalesTrackerTable";
 import NewSaleButton from "../NewSaleButton/NewSaleButton";
+import StatsPanel from "../StatsPanel/StatsPanel";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import Box from "@mui/material/Box";
@@ -37,12 +39,19 @@ function a11yProps(index) {
 }
 
 function SalesTrackerPage() {
+	const dispatch = useDispatch();
+	const userSales = useSelector((state) => state.userSales.data);
 	const sessionUser = useSelector((state) => state.session.user);
 	const [value, setValue] = useState(0);
+  const sales = Object.values(userSales)
 
 	const handleChange = (event, newValue) => {
 		setValue(newValue);
 	};
+
+  useEffect(() => {
+      dispatch(getAllUserSalesThunk());
+    }, [dispatch]);
 
 	return (
 		<>
@@ -60,11 +69,11 @@ function SalesTrackerPage() {
 						<NewSaleButton />
 					</div>
 					<div>
-						<SalesTrackerTable />
+						<SalesTrackerTable sales={sales} />
 					</div>
 				</CustomTabPanel>
 				<CustomTabPanel value={value} index={1}>
-					{/* Add content for the Stats tab here */}
+					<StatsPanel sales={sales} />
 				</CustomTabPanel>
 			</Box>
 		</>
