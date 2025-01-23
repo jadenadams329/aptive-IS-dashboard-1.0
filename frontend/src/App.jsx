@@ -7,7 +7,6 @@ import LoginFormPage from "./components/LoginFormPage/LoginFormPage";
 import SignupFormPage from "./components/SignupFormPage/SignupFormPage";
 import Navigation from "./components/Navigation/Navigation";
 import SalesTrackerPage from "./components/SalesTrackerPage/SalesTrackerPage";
-import Sidebar from "./components/Sidebar/Sidebar";
 import * as sessionActions from "./store/session";
 import "./App.css";
 
@@ -28,7 +27,6 @@ function Layout() {
 
 			{/* Main content row below the navbar */}
 			<div className='main-content'>
-				<Sidebar className='sidebarComponent'/>
 				<div className='outlet-container'>{isLoaded && <Outlet />}</div>
 			</div>
 		</div>

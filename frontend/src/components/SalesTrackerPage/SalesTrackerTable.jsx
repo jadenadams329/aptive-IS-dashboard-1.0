@@ -134,7 +134,18 @@ function SalesTrackerTable() {
 		}
 	};
 
-	const sortedSales = sales.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    const sortByServiced = (a, b) => {
+        const order = { "Pending": 1, "Yes": 2, "No": 3 };
+        return order[a.serviced] - order[b.serviced];
+    };
+
+	const sortedSales = sales.sort((a, b) => {
+        const servicedComparison = sortByServiced(a, b);
+        if (servicedComparison !== 0) {
+            return servicedComparison;
+        }
+        return new Date(a.serviceDate) - new Date(b.serviceDate);
+    });
 
 	const filteredSales = sortedSales.filter((sale) => {
 		const serviceDate = new Date(sale.serviceDate);
