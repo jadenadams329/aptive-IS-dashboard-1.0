@@ -1,5 +1,8 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import CommissionCard from "../CommissionCard/CommissionCard";
+import ServiceRateCard from "../ServiceRateCard/ServiceRateCard";
+import AvgCvCard from "../AvgCvCard/AvgCvCard";
+import MultiYearCard from "../MultiYearCard/MultiYearCard";
 import {
     Box,
     TextField,
@@ -131,6 +134,9 @@ function StatsPanel({ sales }) {
                 </Box>
             </Card>
             <CommissionCard sales={filteredSales} tier={salesTier} data={salesData} />
+            <AvgCvCard sales={filteredSales} data={salesData}></AvgCvCard>
+            <ServiceRateCard sales={filteredSales}/>
+            <MultiYearCard sales={filteredSales} data={salesData}></MultiYearCard>
         </Box>
     );
 }
