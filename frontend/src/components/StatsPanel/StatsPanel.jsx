@@ -3,6 +3,7 @@ import CommissionCard from "../CommissionCard/CommissionCard";
 import ServiceRateCard from "../ServiceRateCard/ServiceRateCard";
 import AvgCvCard from "../AvgCvCard/AvgCvCard";
 import MultiYearCard from "../MultiYearCard/MultiYearCard";
+import AutopayCard from "../AutopayCard/AutopayCard";
 import {
     Box,
     TextField,
@@ -137,6 +138,8 @@ function StatsPanel({ sales }) {
             <AvgCvCard sales={filteredSales} data={salesData}></AvgCvCard>
             <ServiceRateCard sales={filteredSales}/>
             <MultiYearCard sales={filteredSales} data={salesData}></MultiYearCard>
+            <AutopayCard sales={filteredSales} data={salesData}></AutopayCard>
+
         </Box>
     );
 }

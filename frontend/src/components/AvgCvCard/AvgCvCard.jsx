@@ -27,7 +27,7 @@ function AvgCvCard({ sales, data }) {
 			statColor = "yellow";
 		}
 
-		return avgCv;
+		return parseFloat(avgCv).toFixed(2);
 	};
 
 	const averageCv = calculateAvgCv();
