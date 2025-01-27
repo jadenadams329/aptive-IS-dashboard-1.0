@@ -42,7 +42,7 @@ function ServiceRateCard({ sales }) {
 	);
 	return (
 		<Box sx={{ maxWidth: 275 }}>
-			<Card variant='outlined'>{card}</Card>
+			<Card>{card}</Card>
 		</Box>
 	);
 }

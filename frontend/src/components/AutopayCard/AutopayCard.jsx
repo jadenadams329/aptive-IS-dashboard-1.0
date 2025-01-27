@@ -1,4 +1,4 @@
-import { PieChart } from "@mui/x-charts/PieChart";
+import { PieChart, pieArcLabelClasses } from "@mui/x-charts/PieChart";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
@@ -9,6 +9,7 @@ function AutopayCard({ sales, data }) {
 		let none = 0;
 		let ach = 0;
 		let cc = 0;
+		let total = 0;
 		sales.forEach((sale) => {
 			if (data === "Serviced Only" && sale.serviced !== "Yes") return;
 			if (data === "Serviced + Pending" && sale.serviced !== "Yes" && sale.serviced !== "Pending") return;
@@ -24,13 +25,14 @@ function AutopayCard({ sales, data }) {
 			if (!sale.ach && !sale.autopay) {
 				none++;
 			}
+
+			total++
 		});
 
-
-        const easyPayPercent = parseFloat(((cc + ach) / sales.length * 100).toFixed(2));
-        const nonePercent = parseFloat((none / sales.length * 100).toFixed(2));
-        const achPercent = parseFloat((ach / sales.length * 100).toFixed(2));
-        const ccPercent = parseFloat((cc / sales.length * 100).toFixed(2));
+		const easyPayPercent = parseFloat((((cc + ach) / total) * 100).toFixed(2));
+		const nonePercent = parseFloat(((none / total) * 100).toFixed(2));
+		const achPercent = parseFloat(((ach / total) * 100).toFixed(2));
+		const ccPercent = parseFloat(((cc / total) * 100).toFixed(2));
 
 		const autoPayTotals = {
 			easyPayTotal: easyPayPercent,
@@ -52,22 +54,30 @@ function AutopayCard({ sales, data }) {
 			<PieChart
 				series={[
 					{
+
 						data: [
 							{ value: autoPayTotals.nonePercent, color: "red", label: "None" },
-							{ value: autoPayTotals.ccPercent, color: "yellow", label: "CC" },
+							{ value: autoPayTotals.ccPercent, color: "lightGreen", label: "CC" },
 							{ value: autoPayTotals.achPercent, color: "green", label: "ACH" },
 						],
+						arcLabel: (item) => `${item.value}%`,
+						arcLabelMinAngle: 60,
+						arcLabelRadius: "55%",
 					},
 				]}
+				sx={{
+					[`& .${pieArcLabelClasses.root}`]: {
+						fontWeight: "bold",
+					},
+				}}
 				height={200}
-
 			/>
 		</CardContent>
 	);
 
 	return (
-		<Box sx={{ maxWidth: 530 }}>
-			<Card variant='outlined'>{card}</Card>
+		<Box sx={{ width: 530}}>
+			<Card>{card}</Card>
 		</Box>
 	);
 }

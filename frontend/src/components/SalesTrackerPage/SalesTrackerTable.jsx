@@ -370,7 +370,9 @@ function SalesTrackerTable({sales}) {
 											<TableCell align='right'>{sale.monthlyPrice}</TableCell>
 											<TableCell align='right'>{cv}</TableCell>
 											<TableCell align='right'>{ez}</TableCell>
-											<TableCell align='right'>{sale.serviceDate}</TableCell>
+											<TableCell align='right'>
+												{`${sale.serviceDate.split("-")[1]}/${sale.serviceDate.split("-")[2]}/${sale.serviceDate.split("-")[0]}`}
+											</TableCell>
 											<TableCell align='right'>{sale.serviced}</TableCell>
 										</>
 									)}

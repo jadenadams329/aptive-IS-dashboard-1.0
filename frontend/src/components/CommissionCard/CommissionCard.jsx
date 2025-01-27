@@ -42,7 +42,7 @@ function CommissionCard({sales, tier, data}) {
     const commission = calculateCommission();
 
 	const card = (
-		<CardContent>
+		<CardContent sx={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
 			<Typography gutterBottom sx={{ color: "text.secondary", fontSize: 14 }}>
 				Commission
 			</Typography>
@@ -53,8 +53,8 @@ function CommissionCard({sales, tier, data}) {
 	);
 
 	return (
-		<Box sx={{ maxWidth: 275 }}>
-			<Card variant='outlined'>{card}</Card>
+		<Box sx={{ width: 200}}>
+			<Card>{card}</Card>
 		</Box>
 	);
 }

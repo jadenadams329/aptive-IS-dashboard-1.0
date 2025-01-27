@@ -4,6 +4,8 @@ import ServiceRateCard from "../ServiceRateCard/ServiceRateCard";
 import AvgCvCard from "../AvgCvCard/AvgCvCard";
 import MultiYearCard from "../MultiYearCard/MultiYearCard";
 import AutopayCard from "../AutopayCard/AutopayCard";
+import PlanTypeCard from "../PlanTypeCard/PlanTypeCard";
+import "../StatsPanel/StatsPanel.css"
 import {
     Box,
     TextField,
@@ -134,12 +136,18 @@ function StatsPanel({ sales }) {
                     </FormControl>
                 </Box>
             </Card>
-            <CommissionCard sales={filteredSales} tier={salesTier} data={salesData} />
-            <AvgCvCard sales={filteredSales} data={salesData}></AvgCvCard>
-            <ServiceRateCard sales={filteredSales}/>
-            <MultiYearCard sales={filteredSales} data={salesData}></MultiYearCard>
-            <AutopayCard sales={filteredSales} data={salesData}></AutopayCard>
-
+            <div className="cardContainer">
+                <div className="statsCardSection">
+                    <CommissionCard sales={filteredSales} tier={salesTier} data={salesData} />
+                    <AvgCvCard sales={filteredSales} data={salesData}></AvgCvCard>
+                    <ServiceRateCard sales={filteredSales}/>
+                    <MultiYearCard sales={filteredSales} data={salesData}></MultiYearCard>
+                </div>
+                <div className="statsCardSection">
+                    <AutopayCard sales={filteredSales} data={salesData}></AutopayCard>
+                    <PlanTypeCard sales={filteredSales} data={salesData}></PlanTypeCard>
+                </div>
+            </div>
         </Box>
     );
 }
